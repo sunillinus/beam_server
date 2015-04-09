@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  var server = io.connect('http://localhost:3000');
+  var server = io.connect();
   server.on('message', function(data) {
     console.log('client received: ' + JSON.stringify(data));
     var html = '';
