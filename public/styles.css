@@ -1,0 +1,9 @@
+body {
+  margin: 70px;
+}
+
+.beam-panel {
+  float: left;
+  width: 280px;
+  margin: 20px;
+}
