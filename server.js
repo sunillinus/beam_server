@@ -15,8 +15,8 @@ app.post('/beam', parseUrlencoded, function(request, response) {
 });
 
 // http
-var server = app.listen(3000, function() {
-  console.log('Listening on 3000...')
+var server = app.listen(80, function() {
+  console.log('Listening on 80...')
 });
 
 var io = socket.listen(server);

@@ -7,3 +7,11 @@ body {
   width: 280px;
   margin: 20px;
 }
+
+.navbar-inverse {
+  background-color: #5bc0de;
+}
+
+.navbar-inverse .navbar-nav>.active>a {
+  background-color: #5bc0de;
+}
