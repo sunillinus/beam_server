@@ -32,7 +32,7 @@ app.post('/doc', parseUrlencoded, function(request, response) {
     var stat = fs.statSync(tempFile);
     console.log('file size: ' + stat.size);
     var data = '<iframe src = "/ViewerJS/#../' + tempName + '" allowfullscreen webkitallowfullscreen></iframe>'
-    beam({data: data, type: 'html'});
+    beam({data: data, type: 'doc'});
   });
   // request('http://epa.org.kw/Portals/0/sample.pdf').pipe(tempStream);
   http.get(docUrl, function(res) {
