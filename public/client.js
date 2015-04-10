@@ -1,4 +1,5 @@
 $(document).ready(function() {
+  template = _.template($("#content-template").html());
   var server = io.connect();
   server.on('message', function(data) {
     console.log('client received: ' + JSON.stringify(data));
@@ -22,7 +23,6 @@ $(document).ready(function() {
 
 var insertContent = function(html) {
   console.log('insert:' + html);
-  var template = _.template($("#content-template").html());
   var x = template({html: html});
   // console.log(x);
   $('#target').prepend(x);

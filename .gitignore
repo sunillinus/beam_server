@@ -11,6 +11,7 @@
 *~
 *.sass-cache
 *.log
+*.pdf
 
 
 # OS or Editor folders
@@ -32,3 +33,5 @@ dist/
 
 /aws.json
 coverage/
+
+temp_*
