@@ -1,6 +1,7 @@
 var http = require('http');
 var fs = require('fs');
 var express = require('express');
+var httpRequest = require('request');
 var app = express();
 var socket = require('socket.io');
 var bodyParser = require('body-parser');
@@ -16,30 +17,35 @@ app.use('/', express.static('public'));
 
 // beam end point
 app.post('/beam', parseUrlencoded, function(request, response) {
-  beam(request.body);
+  var target = request.body.target;
+  launchWebApp(target, 'http://' + request.get('host'));
+
+  if (request.body.type == 'pdf') {
+    processPdf(request.body.url);
+  } else {
+    beam(request.body);
+  }
+
   response.sendStatus(200);
 });
 
-// doc end point
-app.post('/doc', parseUrlencoded, function(request, response) {
-  console.log('doc: ' + JSON.stringify(request.body));
-  var docUrl = request.body.url;
+// download pdf to a temp loc
+var processPdf = function(docUrl) {
+  console.log('processPdf: ' + docUrl);
   var tempName = 'temp_' + Date.now() + '.pdf';
   var tempFile = __dirname + '/public/' + tempName;
   var tempStream = fs.createWriteStream(tempFile);
   tempStream.on('close', function() {
-    console.log('file dl done');
     var stat = fs.statSync(tempFile);
-    console.log('file size: ' + stat.size);
+    console.log('File Download done: ' + stat.size);
     var data = '<iframe src = "/ViewerJS/#../' + tempName + '" allowfullscreen webkitallowfullscreen></iframe>'
     beam({data: data, type: 'doc'});
   });
-  // request('http://epa.org.kw/Portals/0/sample.pdf').pipe(tempStream);
-  http.get(docUrl, function(res) {
-    res.pipe(tempStream);
-  });
-  response.sendStatus(200);
-});
+  httpRequest(docUrl).pipe(tempStream);
+  // http.get(docUrl, function(res) {
+  //   res.pipe(tempStream);
+  // });
+};
 
 // init http
 var port = process.env.PORT || 3000;
@@ -57,4 +63,20 @@ io.on('connection', function(client) { // io.sockets.on(...) also works?
 var beam = function(msg) {
   console.log('Server Beaming: ' + JSON.stringify(msg));
   io.sockets.emit('message', msg);
+}
+
+// launch a url on target
+var launchWebApp = function(target, launchUrl) {
+  console.log('launchWebApp: ' + target + ' -> ' + launchUrl);
+  httpRequest.post({
+    uri: 'http://' + target + '/api/v2/webapplication/',
+    json: { "url" : launchUrl }},
+    function (error, response, body) {
+      if (error) { 
+        console.log('Error: ' + error);
+      } else {
+        console.log('Status: ' + response.status);
+      }
+    }
+  );
 }
